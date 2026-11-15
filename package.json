@@ -1,0 +1,29 @@
+{
+  "name": "jimmy-notes",
+  "version": "1.0.0",
+  "description": "Jimmy Notes - cute Notion + Obsidian style notebook (Electron, Markdown vault)",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "node tests/md.test.mjs",
+    "icon": "electron build/make-icon.cjs",
+    "pack": "electron-packager . \"Jimmy Notes\" --platform=win32 --arch=x64 --out=dist --overwrite --icon=build/icon.ico --ignore=\"^/(tests|dist[^/]*|reference_images|build/make-icon.cjs)\"",
+    "e2e": "electron tests/smoke.cjs out && electron tests/smoke.cjs out tests/e2e-ui.cjs && electron tests/smoke.cjs out tests/e2e-editing.cjs && electron tests/smoke.cjs out tests/e2e-vault.cjs && electron tests/smoke.cjs out tests/e2e-import.cjs"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@fontsource/inter": "^5.3.0",
+    "@fontsource/jetbrains-mono": "^5.3.0",
+    "@fontsource/jua": "^5.3.0",
+    "@fontsource/lora": "^5.3.0",
+    "@fontsource/noto-sans-kr": "^5.3.1",
+    "@fontsource/nunito": "^5.3.0",
+    "chart.js": "^4.6.1",
+    "katex": "^0.19.1",
+    "pdfjs-dist": "^4.10.38"
+  },
+  "devDependencies": {
+    "@electron/packager": "^20.3.0",
+    "electron": "^45.3.1"
+  }
+}

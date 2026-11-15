@@ -1,0 +1,27 @@
+module.exports = async ({ js, shot, check, sleep, errors, key, type, win, vault }) => {
+  const fs = require('fs'), path = require('path');
+  await js(`window.__app.settings.mode='light'; window.__app.settings.theme='basic'; window.__app.saveSettings(); window.__app.newPage('')`);
+  await sleep(900);
+  await type('Live syntax'); await key('Enter');
+  await type('Link [[Study Planner]] tag #exam  math $x^2+1$ and 한글 입력 test ');
+  await sleep(400);
+  const html = await js(`document.querySelector('#view .editor .txt').innerHTML`);
+  console.log('html:', html.slice(0, 400));
+  check('wikilink converted live', html.includes('class="wikilink'));
+  check('tag converted live', html.includes('class="tag"'));
+  check('inline math rendered', html.includes('katex'));
+  await key('Enter'); await type('/math'); await sleep(300); await key('Enter'); await sleep(500);
+  await type('\\int_0^1 x^2\\,dx = \\frac{1}{3}');
+  await key('Escape'); await sleep(500);
+  check('math block rendered', await js(`!!document.querySelector('#view .math-block .katex')`));
+  await sleep(1500);
+  const f = fs.readdirSync(vault).filter(n => /Live syntax/.test(n))[0];
+  const src = fs.readFileSync(path.join(vault, f), 'utf8');
+  console.log('--- file ---\n' + src);
+  check('file has wikilink + tag + math + korean', src.includes('[[Study Planner]]') && src.includes('#exam') && src.includes('$x^2+1$') && src.includes('$$') && src.includes('한글'));
+  await shot('30-live-syntax');
+  await js(`window.__app.open('Ideas & Sketches.md')`); await sleep(900);
+  await js(`document.querySelector('#view .tg-caret').click()`); await sleep(400);
+  await js(`document.querySelector('#view .t-toggle').scrollIntoView({block:'center'})`); await sleep(300);
+  await shot('31-toggle-open');
+};

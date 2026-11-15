@@ -1,0 +1,161 @@
+/* ===== Theme tokens. data-theme = basic | psyduck | yadon ; data-mode = light | dark ; data-font = clean | serif | soft ===== */
+:root {
+  --font: 'Inter', 'Noto Sans KR', 'Malgun Gothic', 'Segoe UI', system-ui, sans-serif;
+  --font-head: 'Inter', 'Noto Sans KR', 'Malgun Gothic', 'Segoe UI', system-ui, sans-serif;
+  --head-weight: 700; --head-track: -0.022em;
+  --font-mono: 'JetBrains Mono', Consolas, 'Malgun Gothic', monospace;
+  --radius: 12px; --radius-sm: 8px;
+  --accent-ink: #fff;
+  --page-width: 820px;
+}
+[data-font="serif"] { --font-head: 'Lora', 'Noto Sans KR', Georgia, serif; --head-weight: 600; --head-track: -0.01em; }
+[data-font="soft"] { --font: 'Nunito', 'Noto Sans KR', 'Malgun Gothic', sans-serif; --font-head: 'Jua', 'Nunito', 'Malgun Gothic', sans-serif; --head-weight: 400; --head-track: 0; }
+
+/* ---------- Default: calm indigo ---------- */
+[data-theme="basic"][data-mode="light"] {
+  --bg: #fbfbfc; --side: #f3f4f7; --card: #ffffff; --text: #1d2029; --muted: #6a7080; --line: #e4e6ec; --hover: #eceef3;
+  --accent: #4f5bd5; --accent-soft: #e9ebfb; --accent2: #0f9d94; --shadow: 0 1px 2px rgba(20, 24, 40, .06), 0 6px 20px rgba(20, 24, 40, .06);
+  --code-bg: #f4f5f9; --sel: rgba(79, 91, 213, .22);
+  --c1: #4f5bd5; --c2: #0f9d94; --c3: #e0a030; --c4: #e5645a; --c5: #8e68d6; --c6: #4e9c5f;
+  --pattern: none; --hero: var(--hero-layers); --wash: rgba(255, 255, 255, .86); --wash0: rgba(255, 255, 255, 0); --dim: rgba(0, 0, 0, 0);
+}
+[data-theme="basic"][data-mode="dark"] {
+  --bg: #111216; --side: #0d0e11; --card: #181a1f; --text: #e6e8ee; --muted: #8b90a0; --line: #272a32; --hover: #1f2229;
+  --accent: #8f98f5; --accent-soft: #23264a; --accent2: #38c2b5; --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 8px 24px rgba(0, 0, 0, .35);
+  --code-bg: #1d2027; --sel: rgba(143, 152, 245, .3); --accent-ink: #10122a;
+  --c1: #8f98f5; --c2: #38c2b5; --c3: #e8b04c; --c4: #ee7c72; --c5: #b296ee; --c6: #72bf83;
+  --pattern: none; --hero: var(--hero-layers); --wash: rgba(10, 16, 20, .82); --wash0: rgba(10, 16, 20, 0); --dim: rgba(4, 8, 12, .42);
+}
+
+/* ---------- Psyduck: warm mustard + lake blue (colours from the artwork) ---------- */
+[data-theme="psyduck"][data-mode="light"] {
+  --bg: #fcfaf5; --side: #f5f0e2; --card: #fffefb; --text: #2c2415; --muted: #857a62; --line: #eae1c9; --hover: #f0e8d1;
+  --accent: #d9a02b; --accent-soft: #f8ebc6; --accent2: #3a86a8; --shadow: 0 1px 2px rgba(80, 60, 10, .07), 0 6px 20px rgba(80, 60, 10, .07);
+  --code-bg: #f8f3e4; --sel: rgba(58, 134, 168, .25); --accent-ink: #2a1c00;
+  --c1: #d9a02b; --c2: #3a86a8; --c3: #5a9d6c; --c4: #d9694a; --c5: #8b74c6; --c6: #c97a9a;
+  --pattern: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='60'%3E%3Cpath d='M0 30 q10 -9 20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0' fill='none' stroke='%233a86a8' stroke-opacity='.10' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+  --hero: var(--hero-layers); --wash: rgba(255, 255, 255, .86); --wash0: rgba(255, 255, 255, 0); --dim: rgba(0, 0, 0, 0);
+}
+[data-theme="psyduck"][data-mode="dark"] {
+  --bg: #13181c; --side: #0f1317; --card: #1a2126; --text: #efe8d4; --muted: #9a9684; --line: #2a333a; --hover: #222b32;
+  --accent: #e6b445; --accent-soft: #3a3320; --accent2: #5fb0cc; --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 8px 24px rgba(0, 0, 0, .38);
+  --code-bg: #1f272d; --sel: rgba(95, 176, 204, .3); --accent-ink: #231800;
+  --c1: #e6b445; --c2: #5fb0cc; --c3: #78c08e; --c4: #ee8764; --c5: #a794de; --c6: #de93b2;
+  --pattern: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='60'%3E%3Cpath d='M0 30 q10 -9 20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0' fill='none' stroke='%235fb0cc' stroke-opacity='.10' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+  --hero: var(--hero-layers); --wash: rgba(10, 16, 20, .82); --wash0: rgba(10, 16, 20, 0); --dim: rgba(4, 8, 12, .42);
+}
+
+/* ---------- 야돈 / Slowpoke: dusty rose + cream ---------- */
+[data-theme="yadon"][data-mode="light"] {
+  --bg: #fcf8f8; --side: #f6ecee; --card: #fffdfd; --text: #2f2226; --muted: #86717a; --line: #eddfe3; --hover: #f2e4e8;
+  --accent: #d6607f; --accent-soft: #fae1e8; --accent2: #b58a62; --shadow: 0 1px 2px rgba(90, 30, 50, .06), 0 6px 20px rgba(90, 30, 50, .07);
+  --code-bg: #f9eff1; --sel: rgba(214, 96, 127, .24);
+  --c1: #d6607f; --c2: #5f9fa0; --c3: #b58a62; --c4: #8b7bc6; --c5: #5f8fc7; --c6: #7aa36a;
+  --pattern: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48'%3E%3Ccircle cx='6' cy='6' r='1.4' fill='%23d6607f' fill-opacity='.14'/%3E%3C/svg%3E");
+  --hero: var(--hero-layers); --wash: rgba(255, 255, 255, .86); --wash0: rgba(255, 255, 255, 0); --dim: rgba(0, 0, 0, 0);
+}
+[data-theme="yadon"][data-mode="dark"] {
+  --bg: #171214; --side: #120d0f; --card: #1f181a; --text: #f3e6ea; --muted: #a58f97; --line: #33272c; --hover: #2a2024;
+  --accent: #ee8aa3; --accent-soft: #432732; --accent2: #cfa57a; --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 8px 24px rgba(0, 0, 0, .38);
+  --code-bg: #261d20; --sel: rgba(238, 138, 163, .3); --accent-ink: #2b0f19;
+  --c1: #ee8aa3; --c2: #7cbcbc; --c3: #d2a97e; --c4: #a898de; --c5: #84adde; --c6: #98bf88;
+  --pattern: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48'%3E%3Ccircle cx='6' cy='6' r='1.4' fill='%23ee8aa3' fill-opacity='.12'/%3E%3C/svg%3E");
+  --hero: var(--hero-layers); --wash: rgba(10, 16, 20, .82); --wash0: rgba(10, 16, 20, 0); --dim: rgba(4, 8, 12, .42);
+}
+
+/* ---------- Page covers (subtle, tasteful) ---------- */
+.cv-lavender { background: linear-gradient(120deg, #c9cdf7, #e8d9f2); }
+.cv-sunset { background: linear-gradient(120deg, #f6d5b0, #f2b6bd); }
+.cv-ocean { background: linear-gradient(120deg, #b5d6ea, #c4c8f0); }
+.cv-mint { background: linear-gradient(120deg, #c5e8d8, #bcd9ee); }
+.cv-lemon { background: linear-gradient(120deg, #f5e7ae, #f2d0a4); }
+.cv-sakura { background: linear-gradient(120deg, #f4d4de, #f7e6d9); }
+.cv-night { background: linear-gradient(120deg, #2b2f55, #1b2540); }
+.cv-slate { background: linear-gradient(120deg, #d9dce4, #eceef2); }
+.cover.cv-duck { background: url("../assets/mascots/psyduck-art.png") right 6% bottom -70px / 250px no-repeat, linear-gradient(120deg, #f4dfa0, #dfe9ee); }
+.cover.cv-pond { background: url("../assets/mascots/psyduck-art.png") left 8% bottom -70px / 250px no-repeat, linear-gradient(120deg, #bcd9e6, #dfe9ee); }
+.cover.cv-slow { background: url("../assets/mascots/slowpoke-art.png") right 6% bottom -50px / 270px no-repeat, linear-gradient(120deg, #f5cfd9, #f8e8dd); }
+[data-mode="dark"] .cv-lavender, [data-mode="dark"] .cv-sunset, [data-mode="dark"] .cv-ocean, [data-mode="dark"] .cv-mint, [data-mode="dark"] .cv-lemon, [data-mode="dark"] .cv-sakura, [data-mode="dark"] .cv-slate { filter: brightness(.62) saturate(.9); }
+[data-mode="dark"] .cv-duck, [data-mode="dark"] .cv-pond, [data-mode="dark"] .cv-slow { background-blend-mode: normal; box-shadow: inset 0 0 0 999px rgba(0, 0, 0, .28); }
+
+/* ---------- Mascot images ---------- */
+.mascot-img { display: block; width: 100%; height: auto; user-select: none; -webkit-user-drag: none; filter: drop-shadow(0 8px 12px rgba(0, 0, 0, .18)); }
+.mascot-mark { display: grid; place-items: center; width: 100%; height: 100%; border-radius: 9px; background: var(--accent); color: var(--accent-ink); font: 800 19px var(--font-head); letter-spacing: -.04em; }
+@keyframes bobimg { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-3px) rotate(-1.2deg); } }
+.mascot-anim .mascot-img { animation: bobimg 4.5s ease-in-out infinite; transform-origin: 50% 100%; }
+@media (prefers-reduced-motion: reduce) { .mascot-anim .mascot-img { animation: none; } }
+
+/* ---------- 고라파덕 & 야돈 (duo) — "pond": sunny yellow + water blue, pink accents. Palette sampled from reference_images ---------- */
+[data-theme="duo"][data-mode="light"] {
+  --bg: #f8fbfb; --side: #e8f2f5; --card: #ffffff; --text: #1e2a30; --muted: #62798a; --line: #dbe7ec; --hover: #dcecf1;
+  --accent: #e9b30c; --accent-soft: #fbf0c6; --accent2: #2d9bbf; --shadow: 0 1px 2px rgba(20, 60, 80, .06), 0 6px 20px rgba(20, 60, 80, .07);
+  --code-bg: #eff6f8; --sel: rgba(45, 155, 191, .24); --accent-ink: #2a2000;
+  --c1: #e9b30c; --c2: #2d9bbf; --c3: #e58ba0; --c4: #7aa83c; --c5: #8b74c6; --c6: #e07a4a;
+  --pattern: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='70'%3E%3Cg fill='none' stroke='%232d9bbf' stroke-opacity='.13' stroke-width='1.6'%3E%3Cellipse cx='30' cy='20' rx='14' ry='5'/%3E%3Cellipse cx='30' cy='20' rx='24' ry='9'/%3E%3Cellipse cx='92' cy='52' rx='12' ry='4.5'/%3E%3Cellipse cx='92' cy='52' rx='21' ry='8'/%3E%3C/g%3E%3C/svg%3E");
+  --hero: var(--hero-layers); --wash: rgba(255, 255, 255, .86); --wash0: rgba(255, 255, 255, 0); --dim: rgba(0, 0, 0, 0);
+}
+[data-theme="duo"][data-mode="dark"] {
+  --bg: #0f1a1f; --side: #0b1317; --card: #15232a; --text: #e8f1f4; --muted: #8ea5b0; --line: #223540; --hover: #1b2d36;
+  --accent: #f1c232; --accent-soft: #3a3418; --accent2: #55b8d8; --shadow: 0 1px 2px rgba(0, 0, 0, .45), 0 8px 24px rgba(0, 0, 0, .4);
+  --code-bg: #1a2b33; --sel: rgba(85, 184, 216, .3); --accent-ink: #221a00;
+  --c1: #f1c232; --c2: #55b8d8; --c3: #ee9db0; --c4: #98c25f; --c5: #a898de; --c6: #ec9566;
+  --pattern: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='70'%3E%3Cg fill='none' stroke='%2355b8d8' stroke-opacity='.13' stroke-width='1.6'%3E%3Cellipse cx='30' cy='20' rx='14' ry='5'/%3E%3Cellipse cx='30' cy='20' rx='24' ry='9'/%3E%3Cellipse cx='92' cy='52' rx='12' ry='4.5'/%3E%3Cellipse cx='92' cy='52' rx='21' ry='8'/%3E%3C/g%3E%3C/svg%3E");
+  --hero: var(--hero-layers); --wash: rgba(10, 16, 20, .82); --wash0: rgba(10, 16, 20, 0); --dim: rgba(4, 8, 12, .42);
+}
+/* cover: the reference lake photo fades in from the right */
+.cover.cv-duo { background: linear-gradient(90deg, #cfe9f4 0%, #d9ecf2 55%, rgba(217, 236, 242, 0) 82%), url("../assets/mascots/duo-scene.jpg") 97% 50% / auto 100% no-repeat, #cfe9f4; }
+[data-mode="dark"] .cv-duo { box-shadow: inset 0 0 0 999px rgba(0, 0, 0, .3); }
+
+/* the reference figure (Psyduck + Slowpoke on the pond) */
+.duo-art { display: block; width: 100%; height: auto; filter: drop-shadow(0 10px 14px rgba(20, 50, 70, .22)); user-select: none; -webkit-user-drag: none; }
+.mascot-big .duo-art { width: 250px; }
+.theme-card .tm .duo-art { height: 96px; width: auto; margin: 0 auto; }
+.logo-duo { position: absolute; inset: 0; overflow: hidden; }
+.logo-duo .logo-img { position: absolute; max-width: none; pointer-events: none; width: 250%; left: -118%; top: -34%; }
+
+
+
+/* emoji: never clip glyphs (sidebar, cards, page icon, pickers) */
+.pi, .tn-icon, .gi, .page-icon, .cico, .emoji-grid button, .crumbs, .pal-item .ico, .ic-badge {
+  font-family: 'Segoe UI Emoji', 'Apple Color Emoji', 'Noto Color Emoji', var(--font);
+}
+.page-icon { line-height: 1.2; padding-top: 4px; }
+.tn-icon { line-height: 1.3; font-size: 15px; width: 24px; }
+.gcard .gb { position: relative; z-index: 1; }
+.gcard .gi { line-height: 1.25; margin-top: -32px; display: block; }
+.prow .pi { line-height: 1.3; width: 26px; }
+.crumbs span { line-height: 1.5; }
+
+/* ===== header backdrops: the empty top of Home / covers / study card is a painted scene per theme ===== */
+[data-theme="basic"] { --banner: url("../assets/banners/bg-basic.jpg"); }
+[data-theme="psyduck"] { --banner: url("../assets/banners/bg-psyduck.jpg"); }
+[data-theme="yadon"] { --banner: url("../assets/banners/bg-yadon.jpg"); }
+[data-theme="duo"] { --banner: url("../assets/banners/bg-duo.jpg"); }
+:root { --hero-layers: linear-gradient(90deg, var(--wash) 0%, var(--wash) 34%, var(--wash0) 72%), linear-gradient(var(--dim), var(--dim)), var(--banner) center 78% / cover no-repeat; }
+
+/* covers: the reference paintings themselves, cropped wide */
+.cover.cv-dunes { background: url("../assets/banners/bg-basic.jpg") center 60% / cover no-repeat; }
+.cover.cv-duo { background: url("../assets/banners/bg-duo.jpg") center 60% / cover no-repeat; }
+.cover.cv-duck { background: url("../assets/banners/art-falls.jpg") center 60% / cover no-repeat; }
+.cover.cv-slow { background: url("../assets/banners/art-lake.jpg") center 60% / cover no-repeat; }
+.cover.cv-pond { background: url("../assets/banners/art-pond.jpg") center 60% / cover no-repeat; }
+.cover.cv-meadow { background: url("../assets/banners/art-meadow.jpg") center 60% / cover no-repeat; }
+.cover.cv-onsen { background: url("../assets/banners/art-onsen.jpg") center 60% / cover no-repeat; }
+.cover.cv-sea { background: url("../assets/banners/art-sea.jpg") center 60% / cover no-repeat; }
+.cover.cv-swing { background: url("../assets/banners/art-swing.jpg") center 60% / cover no-repeat; }
+.cover.cv-bath { background: url("../assets/banners/art-bath.jpg") center 60% / cover no-repeat; }
+.cover.cv-snow { background: url("../assets/banners/art-snow.jpg") center 60% / cover no-repeat; }
+.cover.cv-boat { background: url("../assets/banners/art-boat.jpg") center 60% / cover no-repeat; }
+.cover.cv-anniv { background: url("../assets/banners/art-30th.jpg") center 60% / cover no-repeat; }
+.cover.cv-well { background: url("../assets/banners/art-well.jpg") center 60% / cover no-repeat; }
+.cover.cv-ring { background: url("../assets/banners/art-ring.jpg") center 60% / cover no-repeat; }
+.cover.cv-field { background: url("../assets/banners/art-field.jpg") center 60% / cover no-repeat; }
+[data-mode="dark"] .cv-dunes { box-shadow: inset 0 0 0 999px rgba(0, 0, 0, .35); }
+/* "auto" cover follows the active theme */
+[data-theme="basic"] .cover.cv-auto { background: var(--banner) center 60% / cover no-repeat; }
+[data-theme="psyduck"] .cover.cv-auto { background: var(--banner) center 60% / cover no-repeat; }
+[data-theme="yadon"] .cover.cv-auto { background: var(--banner) center 60% / cover no-repeat; }
+[data-theme="duo"] .cover.cv-auto { background: var(--banner) center 60% / cover no-repeat; }
+[data-mode="dark"] .cover.cv-auto { box-shadow: inset 0 0 0 999px rgba(0, 0, 0, .32); }
+
+.hero .mascot-big { display: none; }

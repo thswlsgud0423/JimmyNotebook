@@ -1,0 +1,71 @@
+module.exports = async ({ js, shot, check, sleep, errors }) => {
+  await js(`window.__app.settings.theme='basic'; window.__app.settings.mode='light'; window.__app.saveSettings();`);
+  await js(`window.__app.open('Investment Portfolio.md')`); await sleep(2500);
+  await js(`document.querySelector('#view [data-addsym]').click()`); await sleep(500);
+  await js(`(() => { const f = (k) => document.querySelector('.pf-form [data-f=' + k + ']'); f('sym').value = 'AAPL'; f('shares').value = '10'; f('price').value = '300'; })()`);
+  await js(`document.querySelector('.modal [data-a=ok]').click()`); await sleep(4500);
+  await js(`document.querySelector('#view td.sym.clickable').click()`); await sleep(5000);
+  check('stock window opens', await js(`!!document.querySelector('.stk-modal')`));
+  const chartPts = async () => js(`(() => { const c = window.Chart.getChart(document.querySelector('.stk-modal canvas')); return c ? c.data.labels.length : 0; })()`);
+  const p1 = await chartPts(); console.log('points 1D/5D:', p1);
+  check('a chart is drawn (today or last session)', p1 >= 2);
+  for (const k of ['5D', '1M', '6M', '1Y', '5Y', 'MAX']) {
+    await js(`document.querySelector('.stk-ranges [data-k="${k}"]').click()`); await sleep(2500);
+    const n = await chartPts(); console.log(k, n);
+    check('range ' + k + ' draws a chart', n >= 2, String(n));
+  }
+  const stats = await js(`document.querySelector('.stk-grid').textContent.replace(/\\s+/g, ' ')`);
+  console.log(stats.slice(0, 300));
+  check('shows P/E and ROE', /P\/E/.test(stats) && /ROE/.test(stats) && /[0-9]/.test(stats.split('P/E (TTM)')[1] || ''), stats.slice(0, 120));
+  check('shows your position', await js(`/Your position/.test(document.querySelector('.stk-modal').textContent)`));
+  check('shows related news', await js(`document.querySelectorAll('.stk-news a').length >= 1`));
+  await js(`document.querySelector('.stk-nt [data-p="30"]').click()`); await sleep(400);
+  const nCount = await js(`document.querySelectorAll('.stk-news a').length`); console.log('month headlines:', nCount);
+  check('month tab lists many headlines', nCount >= 10, String(nCount));
+  const nsum = await js(`document.querySelector('[data-nsum]').textContent.split(String.fromCharCode(10)).join(' ')`); console.log(nsum.slice(0, 260));
+  check('summary shows price change, tone and themes', /Price/.test(nsum) && /Tone/.test(nsum) && /themes/i.test(nsum), nsum.slice(0, 160));
+  check('headlines show the move on that day', await js(`/that day/.test(document.querySelector('.stk-news').textContent)`));
+  await js(`document.querySelector('.stk-nt [data-p="7"]').click()`); await sleep(300);
+  check('week tab works', await js(`document.querySelectorAll('.stk-news a').length >= 1`));
+  await js(`document.querySelector('.stk-ranges [data-k="1M"]').click()`); await sleep(2500);
+  check('headline dots on the 1M chart', await js(`(() => { const c = window.Chart.getChart(document.querySelector('.stk-modal canvas')); return !!c && c.data.datasets.some(d => d._tips && d.data.some(v => v != null)); })()`));
+  await shot('172-stock-news');
+  await js(`document.querySelector('.stk-ranges [data-k="1Y"]').click()`); await sleep(2000);
+  await js(`(() => { const s = document.querySelector('.stk-cmp'); s.value = '^GSPC'; s.dispatchEvent(new Event('change')); })()`); await sleep(3500);
+  check('compare with S&P 500 draws two lines', await js(`(() => { const c = window.Chart.getChart(document.querySelector('.stk-modal canvas')); return !!c && c.data.datasets.length === 2 && c.data.datasets[1].data.length > 50; })()`));
+  check('shows beat / trailed summary', await js(`/beat|trailed/.test(document.querySelector('.stk-price').textContent)`), await js(`document.querySelector('.stk-price').textContent`));
+  await shot('171-stock-compare');
+  await js(`document.querySelector('.stk-modal [data-x]').click()`); await sleep(400);
+  check('closes', await js(`!document.querySelector('.stk-modal')`));
+  // pie breakdown
+  await js(`(() => { const s = document.querySelector('#view .pie-mode'); s.value = 'currency'; s.dispatchEvent(new Event('change')); })()`); await sleep(800);
+  check('pie can break down by currency', await js(`(() => { const c = window.Chart.getChart(document.querySelector('#view .pie-area canvas')); return !!c && c.data.labels.includes('USD'); })()`));
+  // sell part of the position
+  await js(`document.querySelector('#view [data-sell="0"]').click()`); await sleep(500);
+  await js(`(() => { const f = (k) => document.querySelector('.pf-form [data-f=' + k + ']'); f('shares').value = '4'; f('price').value = '350'; f('shares').dispatchEvent(new Event('input', { bubbles: true })); })()`); await sleep(300);
+  check('sell preview shows realized gain', await js(`/Realized: .*200/.test(document.querySelector('.pf-prev').textContent)`), await js(`document.querySelector('.pf-prev').textContent`));
+  await js(`document.querySelector('.modal [data-a=ok]').click()`); await sleep(2500);
+  const row = await js(`document.querySelector('#view table.pf tr:nth-child(2)').textContent.replace(/\s+/g, ' ')`);
+  check('shares reduced to 6 after selling 4', / 6(?=US)/.test(row), row);
+  check('realized gain shown (+$200)', await js(`/Realized gains[^+]*[+]US[$]200/.test(document.querySelector('#view .pf-real').textContent)`), await js(`document.querySelector('#view .pf-real').textContent`));
+  check('proceeds added to cash', await js(`!!document.querySelector('#view tr.cashrow input[data-ci]') && +document.querySelector('#view tr.cashrow input[data-ci]').value === 1400`));
+  await js(`document.querySelector('#view [data-sales]').click()`); await sleep(400);
+  check('sales list opens', await js(`document.querySelectorAll('.modal table.lots tr').length === 2`));
+  await js(`document.querySelector('.modal [data-done]').click()`); await sleep(300);
+  // markets widget on Home
+  await js(`window.__app.openView({type:'home'})`); await sleep(3500);
+  const rows = await js(`document.querySelectorAll('#view .mk-row').length`);
+  check('markets widget lists FX + indices', rows >= 9, String(rows));
+  const mk = await js(`[...document.querySelectorAll('#view .mk-row')].map(r => r.textContent.replace(/\s+/g, ' ').trim()).join(' | ')`); console.log(mk.slice(0, 400));
+  check('USD→KRW has a rate', await js(`document.querySelector('#view .mk-row').textContent.indexOf('1,') > 0 || /[0-9],[0-9]{3}[.][0-9]{2}/.test(document.querySelector('#view .mk-row').textContent)`), mk.slice(0, 80));
+  await shot('173-markets-widget');
+  await js(`document.querySelectorAll('#view .mk-row')[5].click()`); await sleep(3500);
+  check('clicking an index opens its chart', await js(`!!document.querySelector('.stk-modal') && !!window.Chart.getChart(document.querySelector('.stk-modal canvas'))`));
+  await sleep(4000);
+  check('index (KOSPI) has news headlines', await js(`document.querySelectorAll('.stk-modal .stk-news a').length >= 1`), await js(`document.querySelector('.stk-modal [data-news]').textContent.slice(0, 80)`));
+  await js(`document.querySelector('.stk-modal [data-x]').click()`); await sleep(400);
+  await js(`document.querySelectorAll('#view .mk-row')[0].click()`); await sleep(6000);
+  check('exchange rate (USD→KRW) has news headlines', await js(`document.querySelectorAll('.stk-modal .stk-news a').length >= 1`), await js(`document.querySelector('.stk-modal [data-news]').textContent.slice(0, 80)`));
+  await js(`document.querySelector('.stk-modal [data-x]').click()`); await sleep(300);
+  check('no errors', errors.length === 0, errors.slice(0, 2).join(' | '));
+};
