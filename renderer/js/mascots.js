@@ -5,7 +5,10 @@ const DUO = 'assets/mascots/duo-diorama.png';
 const SCENE = 'assets/mascots/duo-scene.jpg';
 const IMG = { psyduck: PSY, yadon: SLOW };
 export const duoScene = SCENE;
-export const hasMascot = (theme) => theme === 'duo' || !!IMG[theme];
+// The character artwork is not part of the public repo. If the files are missing, the character themes and covers are hidden.
+const probe = (u) => new Promise((r) => { const i = new Image(); i.onload = () => r(true); i.onerror = () => r(false); i.src = u; });
+export const HAS_ART = await probe(PSY);
+export const hasMascot = (theme) => HAS_ART && (theme === 'duo' || !!IMG[theme]);
 export const mascotURL = (theme) => IMG[theme] || '';
 const img = (src, cls) => `<img class="mascot-img ${cls}" src="${src}" alt="" draggable="false">`;
 
@@ -40,3 +43,4 @@ export const THEMES = {
   yadon: { label: '야돈', blurb: 'Slowpoke — dusty rose & cream' },
   duo: { label: '고라파덕 & 야돈', blurb: 'Pond — sunny yellow & water blue' }
 };
+if (!HAS_ART) { delete THEMES.psyduck; delete THEMES.yadon; delete THEMES.duo; }

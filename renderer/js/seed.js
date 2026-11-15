@@ -45,7 +45,7 @@ export function seedPages() {
     h2('Try these'),
     todo('Type **/** on an empty line to insert charts, drawings, tables, timers…'),
     todo('Type **[[** to link another page, then check the Backlinks panel (right sidebar)'),
-    todo('Switch themes in Settings: Default, Psyduck or 야돈'),
+    todo('Switch themes in Settings'),
     todo('Drag the ⋮⋮ handle next to a block to reorder it'),
     h2('Where things live'),
     ul('[[Study Planner]] — timer, kanban, flashcards'),

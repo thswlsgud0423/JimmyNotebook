@@ -6,7 +6,7 @@ import { openHistory, replaceAllIn, countMatches } from './tools.js';
 import { showDoc, docMenu, importPdfs } from './docview.js';
 import { initAssistant, toggleAssistant, isOpen as aiOpen, openAiSettings } from './assistant.js';
 import { icon } from './icons.js';
-import { mascotSVG, logoHTML, hasMascot, MASCOT_LINES, THEMES } from './mascots.js';
+import { mascotSVG, logoHTML, hasMascot, MASCOT_LINES, THEMES, HAS_ART } from './mascots.js';
 import { $, h, escHtml, debounce, toast, openMenu, menuAt, closeMenus, emojiPicker, promptDialog, confirmDialog, ago, fmtDate, placeCaretEnd } from './ui.js';
 import { renderHome, renderCalendarView, renderTagsView, renderTagPage, renderTrashView } from './views.js';
 import { openPalette, openSearch, openSettings, pickTemplate } from './dialogs.js';
@@ -22,7 +22,9 @@ import { resetLayoutCache } from './views.js';
 const DEFAULTS = { theme: 'basic', mode: 'system', mascot: true, pattern: false, width: 'normal', fontSize: '15px', font: 'clean', accent: '', sbWidth: 272, sbHidden: false, rightOpen: false, expanded: [], last: null };
 const settings = Object.assign({}, DEFAULTS, (() => { try { return JSON.parse(localStorage.getItem('jn.settings') || '{}'); } catch (e) { return {}; } })());
 const COVER_NAMES = { auto: 'Match my theme', dunes: 'Dunes', slate: 'Slate', lavender: 'Lavender', sunset: 'Sunset', ocean: 'Ocean', mint: 'Mint', lemon: 'Lemon', sakura: 'Sakura', night: 'Night', duck: 'Psyduck waterfall', pond: 'Psyduck pond', slow: 'Slowpoke lake', duo: 'Psyduck & Slowpoke', meadow: 'Slowpoke meadow', onsen: 'Slowpoke onsen', sea: 'Psyduck sea', swing: 'Psyduck swing', bath: 'Psyduck bath', snow: 'Psyduck snow', boat: 'Slowpoke boat', anniv: '30th anniversary', well: 'The well', ring: 'Slowpoke ring', field: 'Slowpoke field' };
-const COVERS = ['auto', 'dunes', 'slate', 'lavender', 'sunset', 'ocean', 'mint', 'lemon', 'sakura', 'night', 'duck', 'pond', 'slow', 'duo', 'meadow', 'onsen', 'sea', 'swing', 'bath', 'snow', 'boat', 'anniv', 'well', 'ring', 'field'];
+const COVERS = ['auto', 'dunes', 'slate', 'lavender', 'sunset', 'ocean', 'mint', 'lemon', 'sakura', 'night', 'duck', 'pond', 'slow', 'duo', 'meadow', 'onsen', 'sea', 'swing', 'bath', 'snow', 'boat', 'anniv', 'well', 'ring', 'field']
+  .filter(c => HAS_ART || ['auto', 'dunes', 'slate', 'lavender', 'sunset', 'ocean', 'mint', 'lemon', 'sakura', 'night'].includes(c));
+if (!THEMES[settings.theme]) settings.theme = 'basic';
 
 function applyTheme() {
   const root = document.documentElement;
@@ -804,9 +806,11 @@ function commands() {
     { name: 'Toggle outline / backlinks panel', icon: 'link', run: toggleRight },
     { name: 'Toggle light / dark mode', icon: 'moon', run: toggleMode },
     { name: 'Theme: Default (Notey)', icon: 'sparkle', run: () => { settings.theme = 'basic'; saveSettings(); } },
-    { name: 'Theme: Psyduck', icon: 'sparkle', run: () => { settings.theme = 'psyduck'; saveSettings(); } },
-    { name: 'Theme: 야돈 (Slowpoke)', icon: 'sparkle', run: () => { settings.theme = 'yadon'; saveSettings(); } },
-    { name: 'Theme: 고라파덕 & 야돈 (together)', icon: 'sparkle', run: () => { settings.theme = 'duo'; saveSettings(); } },
+    ...(HAS_ART ? [
+      { name: 'Theme: Psyduck', icon: 'sparkle', run: () => { settings.theme = 'psyduck'; saveSettings(); } },
+      { name: 'Theme: 야돈 (Slowpoke)', icon: 'sparkle', run: () => { settings.theme = 'yadon'; saveSettings(); } },
+      { name: 'Theme: 고라파덕 & 야돈 (together)', icon: 'sparkle', run: () => { settings.theme = 'duo'; saveSettings(); } }
+    ] : []),
     { name: 'Toggle mascot buddy', icon: 'star', run: () => { settings.mascot = !settings.mascot; saveSettings(); } },
     { name: 'Settings', icon: 'settings', run: () => openSettings(app) },
     { name: 'New page from template…', icon: 'file', run: () => pickTemplate(app, async (bl) => { const t = await promptDialog('Page title'); if (!t) return; const pth = await vault.createPage('', t, { blocks: bl }); open(pth); }) },

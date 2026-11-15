@@ -3,3 +3,11 @@ dist/
 dist-v13/
 out-t/
 out/
+
+# Character artwork (copyrighted, personal use only, not published)
+reference_images/
+renderer/assets/mascots/
+renderer/assets/banners/art-*.jpg
+build/make-art-banners.py
+build/make-duo-assets.py
+docs/images/duo-theme.png

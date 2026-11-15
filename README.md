@@ -25,7 +25,7 @@ Built with Electron · No account · No cloud · Your notes stay yours
 - **Sketch pad**: pen, highlighter, shapes and text, with export to an image.
 - **Math and code**: KaTeX equations and syntax-highlighted code.
 - **AI assistant** (optional): summarize and ask questions about a page, and import PDFs.
-- **Themes**: Default, Psyduck, and a dark mode, plus accent colors and covers.
+- **Themes**: light and dark mode, accent colors, fonts and page covers.
 
 ## Screenshots
 
@@ -42,9 +42,6 @@ Cards can be resized individually. Double-click the grip to reset a card.
 
 ### Dark mode and sketches
 <p align="center"><img src="docs/images/sketches-dark.png" alt="Ideas and sketches in dark mode" width="860"></p>
-
-### Psyduck theme and dashboard
-<p align="center"><img src="docs/images/duo-theme.png" alt="Psyduck theme with the home dashboard" width="860"></p>
 
 ## Getting started
 
