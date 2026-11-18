@@ -112,3 +112,5 @@
 .st-timer.has-m .st-big { font-size: 28px; }
 .st-timer.has-m .st-right { min-width: 160px; }
 .st-mascot > .mascot-img, .st-mascot > .duo-art { width: 170px; }
+.st-btns { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.st-reset[hidden] { display: none; }

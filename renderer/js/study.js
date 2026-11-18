@@ -100,6 +100,10 @@ export function stop(silent) {
   finish(r, Date.now()); D.running = null; persist(); changed();
   if (!silent) toast(STUDY_LINES.stop[theme()] || STUDY_LINES.stop.basic, 1800);
 }
+// throw the running timer away without saving it (e.g. you forgot to stop it)
+export function discard() { if (!D.running) return; D.running = null; persist(); changed(); toast('Timer reset — that time was not saved.', 2200); }
+// delete every saved session that touches one day
+export function clearDay(key) { const t0 = new Date(key + 'T00:00:00').getTime(), t1 = t0 + 864e5; D.sessions = D.sessions.filter((s) => !(s.b > t0 && s.a < t1)); persist(); changed(); }
 export function toggle() { if (D.running) stop(); else start(current()); }
 export function addManual(id, minutes) { const end = Date.now(); D.sessions.push({ id: uid(), s: id, a: end - minutes * 60000, b: end }); persist(); changed(); }
 export function deleteSession(id) { D.sessions = D.sessions.filter((s) => s.id !== id); persist(); changed(); }
@@ -125,12 +129,15 @@ export function renderStudyWidget(body) {
   const time = body.querySelector('.stw-time'), sub = body.querySelector('.stw-sub'), bar = body.querySelector('.bar i'), sel = body.querySelector('select'), go = body.querySelector('[data-go]');
   const fill = () => { sel.innerHTML = D.subjects.map((s) => `<option value="${s.id}" ${s.id === current() ? 'selected' : ''}>${escHtml(s.name)}</option>`).join(''); };
   fill();
+  const rst = h('<button class="btn sm ghost" title="Reset: throw away the running timer without saving it" hidden>↺</button>'); go.after(rst);
+  rst.onclick = async () => { if (await confirmDialog('Reset the running timer? The time you have not saved yet will be thrown away.', 'Reset', true)) discard(); };
   const update = () => {
     if (!body.isConnected && Date.now() - born > 1500) { unsub(); return; }
     const t = todaySeconds(); time.textContent = fmtHMS(t);
     sub.textContent = D.running ? 'Studying · ' + subject(D.running.subject).name : 'Today' + (D.goalMin ? ' · goal ' + fmtHM(D.goalMin * 60) : '');
     bar.style.width = Math.min(100, D.goalMin ? t / (D.goalMin * 60) * 100 : 0) + '%';
     go.textContent = D.running ? 'Stop' : 'Start'; go.classList.toggle('danger', !!D.running); go.classList.toggle('primary', !D.running);
+    rst.hidden = !D.running;
     const cs = subject(sel.value || current()); mat.hidden = !(cs && cs.link); if (cs && cs.link) mat.textContent = 'Open “' + cs.name + '” material';
   };
   const unsub = subscribe(update); update();
@@ -153,13 +160,13 @@ export function renderStudyView(app, view) {
           <div class="st-center"><div class="st-lab">Today</div><div class="st-big">00:00:00</div><div class="st-goal"></div></div></div>
         <div class="st-right">
           <div class="st-now"></div>
-          <div class="st-btns"><button class="st-play" data-a="toggle"></button></div>
+          <div class="st-btns"><button class="st-play" data-a="toggle"></button><button class="btn ghost st-reset" data-a="reset" title="Throw away the running timer without saving it" hidden>${icon('undo', 15)} Reset</button></div>
           <div class="st-level"><div class="lv"></div><div class="bar"><i></i></div><div class="muted lvs"></div></div>
         </div>
         ${hasMascot(app.settings.theme) ? `<div class="st-mascot mascot-anim">${mascotSVG(app.settings.theme)}</div>` : ''}
       </section>
       <section class="card st-subj"><h3>${icon('book', 15)}<span class="grow">Subjects</span><button class="iconbtn" data-a="addsub" title="Add subject">${icon('plus', 15)}</button></h3><div class="st-sl"></div></section>
-      <section class="card st-log"><h3>${icon('list', 15)}<span class="grow" data-logtitle>Today’s sessions</span></h3><div class="st-ll"></div></section>
+      <section class="card st-log"><h3>${icon('list', 15)}<span class="grow" data-logtitle>Today’s sessions</span><button class="iconbtn" data-a="clearday" title="Delete all saved time for this day">${icon('trash', 15)}</button></h3><div class="st-ll"></div></section>
       <section class="card st-stats"><h3>${icon('chart', 15)}<span class="grow">Statistics</span><div class="seg sm"><button data-r="7" class="on">Week</button><button data-r="30">Month</button></div></h3>
         <div class="statrow st-tiles"></div>
         <div class="st-charts"><div class="st-bar"><canvas></canvas></div><div class="st-pie"><canvas></canvas></div></div>
@@ -179,7 +186,7 @@ export function renderStudyView(app, view) {
     nowEl.innerHTML = D.running ? `<div class="muted">Studying</div><div class="st-cur">${subjectChip(s)}<b>${fmtHMS(sessionSeconds())}</b></div>` : `<div class="muted">Ready</div><div class="st-cur">${subjectChip(s)}</div>`;
     playBtn.innerHTML = D.running ? `${icon('x', 22)}<span>Stop</span>` : `${icon('forward', 22)}<span>Start</span>`;
     playBtn.classList.toggle('on', !!D.running);
-    root.classList.toggle('running', !!D.running);
+    root.classList.toggle('running', !!D.running); q('.st-reset').hidden = !D.running;
     root.querySelectorAll('[data-sub-time]').forEach((el) => { el.textContent = fmtHM(todaySeconds(el.dataset.subTime)); });
     const dd = q('[data-dday]'); dd.textContent = ddayText(); dd.hidden = !D.dday;
   }
@@ -193,7 +200,7 @@ export function renderStudyView(app, view) {
     const rows = allSessions().filter((s) => s.b > t0 && s.a < t1).sort((a, b) => b.a - a.a);
     q('[data-logtitle]').textContent = selDay === dayKey(Date.now()) ? 'Today’s sessions' : new Date(t0).toLocaleDateString('en-US', { month: 'short', day: 'numeric', weekday: 'short' }) + ' sessions';
     const tm = (t) => new Date(t).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
-    q('.st-ll').innerHTML = rows.map((s) => `<div class="st-row">${subjectChip(subject(s.s))}<span class="rg">${tm(Math.max(s.a, t0))} – ${s.running ? 'now' : tm(Math.min(s.b, t1))}</span><b>${fmtHM((Math.min(s.b, t1, Date.now()) - Math.max(s.a, t0)) / 1000)}</b>${s.running ? '' : `<button class="iconbtn" data-del="${s.id}" title="Delete">${icon('trash', 14)}</button>`}</div>`).join('') || '<div class="muted">No sessions yet.</div>';
+    q('.st-ll').innerHTML = rows.map((s) => `<div class="st-row">${subjectChip(subject(s.s))}<span class="rg">${tm(Math.max(s.a, t0))} – ${s.running ? 'now' : tm(Math.min(s.b, t1))}</span><b>${fmtHM((Math.min(s.b, t1, Date.now()) - Math.max(s.a, t0)) / 1000)}</b><button class="iconbtn" data-del="${s.id}" title="${s.running ? 'Reset (throw away this running session)' : 'Delete'}">${icon('trash', 14)}</button></div>`).join('') || '<div class="muted">No sessions yet.</div>';
   }
   function paintStats() {
     const st = stats(); const m = st.map; const now = new Date();
@@ -237,6 +244,8 @@ export function renderStudyView(app, view) {
     if (a) {
       const k = a.dataset.a;
       if (k === 'toggle') { toggle(); refreshAll(); }
+      else if (k === 'reset') { if (await confirmDialog('Reset the running timer? The ' + fmtHMS(sessionSeconds()) + ' you have not saved yet will be thrown away.', 'Reset', true)) { discard(); refreshAll(); } }
+      else if (k === 'clearday') { const lbl = selDay === dayKey(Date.now()) ? 'today' : selDay; if (await confirmDialog('Delete ALL saved study time for ' + lbl + '? This cannot be undone.', 'Delete', true)) { clearDay(selDay); refreshAll(); } }
       else if (k === 'focus') openFocus(app);
       else if (k === 'goal') { const v = await formDialog('Daily study goal', [{ key: 'h', label: 'Hours per day', type: 'number', value: Math.round(D.goalMin / 6) / 10, min: 0.5, hint: 'For example 4, or 3.5 for three and a half hours.' }], { validate: (x) => (!(x.h >= 0.5 && x.h <= 24) ? 'Enter between 0.5 and 24 hours' : '') }); if (v) { setGoal(Math.round(v.h * 60)); paintStats(); paintLive(); } }
       else if (k === 'dday') {
@@ -264,7 +273,7 @@ export function renderStudyView(app, view) {
       }
       D.lastSubject = id; if (D.running) start(id); persist(); refreshAll(); return;
     }
-    const del = t.closest('[data-del]'); if (del) { deleteSession(del.dataset.del); refreshAll(); return; }
+    const del = t.closest('[data-del]'); if (del) { if (del.dataset.del === 'run') discard(); else deleteSession(del.dataset.del); refreshAll(); return; }
     const r = t.closest('[data-r]'); if (r) { range = +r.dataset.r; root.querySelectorAll('[data-r]').forEach((b) => b.classList.toggle('on', b === r)); paintStats(); return; }
     const c = t.closest('.hmc[data-k]'); if (c) { selDay = c.dataset.k; paintLog(); paintStats(); }
   });

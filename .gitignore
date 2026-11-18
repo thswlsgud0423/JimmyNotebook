@@ -11,3 +11,4 @@ renderer/assets/banners/art-*.jpg
 build/make-art-banners.py
 build/make-duo-assets.py
 docs/images/duo-theme.png
+image.png
